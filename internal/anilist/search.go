@@ -8,7 +8,6 @@ query ($search: String) {
     media(search: $search, type: ANIME) {
       id
       title { romaji english native }
-      episodes
       coverImage { large }
     }
   }
@@ -21,7 +20,6 @@ type Anime struct {
 		English string `json:"english"`
 		Native  string `json:"native"`
 	} `json:"title"`
-	Episodes   int `json:"episodes"`
 	CoverImage struct {
 		Large string `json:"large"`
 	} `json:"coverImage"`
