@@ -55,7 +55,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		return m, func() tea.Msg {
-			return PushScreenMsg{Screen: NewSearchResult(msg.Result)}
+			return PushScreenMsg{Screen: NewSearchResults(msg.Result)}
 		}
 	case AnimeDetailsFetchedMsg:
 		if msg.Err != nil {

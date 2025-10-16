@@ -2,18 +2,29 @@ package ui
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/nordluma/yaapr/internal/anilist"
 )
 
-type SearchModel struct{}
+type SearchModel struct {
+	input textinput.Model
+}
 
-func NewSearch() SearchModel { return SearchModel{} }
+func NewSearch() SearchModel {
+	ti := textinput.New()
+	ti.Placeholder = "Enter anime name"
+	ti.Focus()
+	ti.CharLimit = 128
+	ti.Width = 30
 
-func (m SearchModel) Init() tea.Cmd     { return nil }
-func (m SearchModel) View() string      { return "Search Anime [TODO]" }
+	return SearchModel{input: ti}
+}
+
+func (m SearchModel) Init() tea.Cmd     { return textinput.Blink }
 func (m SearchModel) IsTransient() bool { return false }
 
 func (m SearchModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
@@ -21,19 +32,33 @@ func (m SearchModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			searchTerm := "berserk"
-			loading := NewLoading("Searching for Animes")
+			query := m.input.Value()
+			if query == "" {
+				return m, nil
+			}
+
+			loader := NewLoading(fmt.Sprintf("Searching for \"%s\"", query))
 
 			return m, tea.Batch(
-				func() tea.Msg { return PushScreenMsg{Screen: loading} },
-				searchAnimeCmd(anilist.NewClient(""), searchTerm),
+				func() tea.Msg { return PushScreenMsg{Screen: loader} },
+				searchAnimeCmd(anilist.NewClient(""), query),
 			)
-		case "esc", "q":
+		case "esc":
 			return m, func() tea.Msg { return PopScreenMsg{} }
 		}
 	}
 
-	return m, nil
+	var cmd tea.Cmd
+	m.input, cmd = m.input.Update(msg)
+
+	return m, cmd
+}
+
+func (m SearchModel) View() string {
+	return fmt.Sprintf(
+		"Search Anime:\n\n%s\n\nPress Enter to search",
+		m.input.View(),
+	)
 }
 
 func searchAnimeCmd(client *anilist.Client, name string) tea.Cmd {

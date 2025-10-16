@@ -12,7 +12,7 @@ type SearchResultModel struct {
 	results list.Model
 }
 
-func NewSearchResult(result []anilist.Anime) SearchResultModel {
+func NewSearchResults(result []anilist.Anime) SearchResultModel {
 	animes := []list.Item{}
 	for _, anime := range result {
 		animes = append(animes, item(anime.Title.English))
