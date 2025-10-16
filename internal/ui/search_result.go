@@ -15,7 +15,11 @@ type SearchResultModel struct {
 func NewSearchResults(result []anilist.Anime) SearchResultModel {
 	animes := []list.Item{}
 	for _, anime := range result {
-		animes = append(animes, item(anime.Title.English))
+		if anime.Title.English != "" {
+			animes = append(animes, item(anime.Title.English))
+		} else {
+			animes = append(animes, item(anime.Title.Romaji))
+		}
 	}
 
 	if len(animes) == 0 {
