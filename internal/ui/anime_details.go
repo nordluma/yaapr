@@ -2,16 +2,17 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/nordluma/yaapr/internal/models"
+	"github.com/nordluma/yaapr/internal/anilist"
 )
 
 type AnimeDetailsModel struct {
-	anime models.Anime
+	anime anilist.AnimeDetails
 }
 
-func NewAnimeDetails(a models.Anime) AnimeDetailsModel {
+func NewAnimeDetails(a anilist.AnimeDetails) AnimeDetailsModel {
 	return AnimeDetailsModel{anime: a}
 }
 
@@ -31,9 +32,19 @@ func (m AnimeDetailsModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 }
 
 func (m AnimeDetailsModel) View() string {
+	var title string
+	if m.anime.Title.English != "" {
+		title = m.anime.Title.English
+	} else {
+		title = m.anime.Title.Romaji
+	}
+
 	return fmt.Sprintf(
-		"Anime Details:\n\nTitle: %s\nID: %s\n\n[esc] Back",
-		m.anime.Title.English,
+		"Anime Details:\n\nTitle: %s\nID: %d\nStatus: %s\nGenres: %s\nEpisodes: %d\n\n[esc] / [q] - Back",
+		title,
 		m.anime.ID,
+		m.anime.Status,
+		strings.Join(m.anime.Genres, ", "),
+		m.anime.Episodes,
 	)
 }

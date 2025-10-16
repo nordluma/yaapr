@@ -5,7 +5,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/nordluma/yaapr/internal/anilist"
-	"github.com/nordluma/yaapr/internal/models"
 )
 
 type Screen interface {
@@ -16,7 +15,7 @@ type Screen interface {
 }
 
 type AnimeDetailsFetchedMsg struct {
-	Anime models.Anime
+	Anime anilist.AnimeDetails
 	Err   error
 }
 
@@ -59,7 +58,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case AnimeDetailsFetchedMsg:
 		if msg.Err != nil {
-			errorScreen := NewLoading("Failed to load anime")
+			errorScreen := NewLoading(fmt.Sprintf("Failed to load anime: %s", msg.Err))
 			return m, func() tea.Msg { return PushScreenMsg{Screen: errorScreen} }
 		}
 
