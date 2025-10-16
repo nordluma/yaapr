@@ -1,10 +1,11 @@
 package ui
 
 import (
+	"context"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/nordluma/yaapr/internal/api"
+	"github.com/nordluma/yaapr/internal/anilist"
 )
 
 type SearchModel struct{}
@@ -20,13 +21,12 @@ func (m SearchModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			selected := "123"
-
-			loading := NewLoading("Fetching anime details")
+			searchTerm := "berserk"
+			loading := NewLoading("Searching for Animes")
 
 			return m, tea.Batch(
 				func() tea.Msg { return PushScreenMsg{Screen: loading} },
-				fetchAnimeDetailsCmd(selected),
+				searchAnimeCmd(anilist.NewClient(""), searchTerm),
 			)
 		case "esc", "q":
 			return m, func() tea.Msg { return PopScreenMsg{} }
@@ -36,11 +36,13 @@ func (m SearchModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	return m, nil
 }
 
-func fetchAnimeDetailsCmd(id string) tea.Cmd {
+func searchAnimeCmd(client *anilist.Client, name string) tea.Cmd {
 	return func() tea.Msg {
-		time.Sleep(1 * time.Second)
-		anime := api.FetchAnimeDetails(id)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
-		return AnimeDetailsFetchedMsg{Anime: anime, Err: nil}
+		res, err := client.SearchAnime(ctx, name)
+
+		return SearchResponseMsg{Result: res, Err: err}
 	}
 }

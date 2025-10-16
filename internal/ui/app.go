@@ -1,7 +1,10 @@
 package ui
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/nordluma/yaapr/internal/anilist"
 	"github.com/nordluma/yaapr/internal/models"
 )
 
@@ -15,6 +18,11 @@ type Screen interface {
 type AnimeDetailsFetchedMsg struct {
 	Anime models.Anime
 	Err   error
+}
+
+type SearchResponseMsg struct {
+	Result []anilist.Anime
+	Err    error
 }
 
 type PushScreenMsg struct {
@@ -40,6 +48,15 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.pop()
 
 		return m, nil
+	case SearchResponseMsg:
+		if msg.Err != nil {
+			errorScreen := NewLoading(fmt.Sprintf("Failed to search for anime: %s", msg.Err))
+			return m, func() tea.Msg { return PushScreenMsg{Screen: errorScreen} }
+		}
+
+		return m, func() tea.Msg {
+			return PushScreenMsg{Screen: NewSearchResult(msg.Result)}
+		}
 	case AnimeDetailsFetchedMsg:
 		if msg.Err != nil {
 			errorScreen := NewLoading("Failed to load anime")
