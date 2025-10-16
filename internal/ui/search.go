@@ -41,6 +41,7 @@ func (m SearchModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 
 			return m, tea.Batch(
 				func() tea.Msg { return PushScreenMsg{Screen: loader} },
+				// TODO: share client instead of creating it
 				searchAnimeCmd(anilist.NewClient(""), query),
 			)
 		case "esc":

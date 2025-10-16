@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/nordluma/yaapr/internal/anilist"
 )
 
 const listHeight = 14
@@ -43,12 +44,20 @@ func (d itemDelegate) Render(
 	index int,
 	listItem list.Item,
 ) {
-	i, ok := listItem.(item)
-	if !ok {
-		return
+	var title string
+	switch i := listItem.(type) {
+	case item:
+
+		title = string(i)
+	case anilist.Anime:
+		if i.Title.English != "" {
+			title = i.Title.English
+		} else {
+			title = i.Title.Romaji
+		}
 	}
 
-	str := fmt.Sprintf("%s", i)
+	str := fmt.Sprintf("%s", title)
 
 	fn := itemStyle.Render
 	if index == m.Index() {

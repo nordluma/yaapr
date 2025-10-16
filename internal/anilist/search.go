@@ -25,6 +25,8 @@ type Anime struct {
 	} `json:"coverImage"`
 }
 
+func (a Anime) FilterValue() string { return "" }
+
 type searchResponse struct {
 	Data struct {
 		Page struct {

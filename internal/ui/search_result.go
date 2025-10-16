@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"context"
 	"time"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -15,15 +16,7 @@ type SearchResultModel struct {
 func NewSearchResults(result []anilist.Anime) SearchResultModel {
 	animes := []list.Item{}
 	for _, anime := range result {
-		if anime.Title.English != "" {
-			animes = append(animes, item(anime.Title.English))
-		} else {
-			animes = append(animes, item(anime.Title.Romaji))
-		}
-	}
-
-	if len(animes) == 0 {
-		animes = append(animes, item("No results..."))
+		animes = append(animes, anime)
 	}
 
 	const defaultWidth = 20
@@ -51,13 +44,17 @@ func (m SearchResultModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			selected := "123"
+			selected, ok := m.results.SelectedItem().(anilist.Anime)
+			if !ok {
+				return m, cmd
+			}
 
 			loading := NewLoading("Fetching anime details")
 
 			return m, tea.Batch(
 				func() tea.Msg { return PushScreenMsg{Screen: loading} },
-				fetchAnimeDetailsCmd(selected),
+				// TODO: share client instead of creating it
+				fetchAnimeDetailsCmd(anilist.NewClient(""), selected.ID),
 			)
 		case "esc", "q":
 			return m, func() tea.Msg { return PopScreenMsg{} }
@@ -67,11 +64,13 @@ func (m SearchResultModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	return m, cmd
 }
 
-func fetchAnimeDetailsCmd(id string) tea.Cmd {
+func fetchAnimeDetailsCmd(client *anilist.Client, id int) tea.Cmd {
 	return func() tea.Msg {
-		time.Sleep(1 * time.Second)
-		anime := anilist.FetchAnimeDetails(id)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
-		return AnimeDetailsFetchedMsg{Anime: anime, Err: nil}
+		anime, err := client.GetAnimeById(ctx, id)
+
+		return AnimeDetailsFetchedMsg{Anime: anime, Err: err}
 	}
 }
