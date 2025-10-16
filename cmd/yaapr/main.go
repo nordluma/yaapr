@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/nordluma/yaapr/internal/ui"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	p := tea.NewProgram(ui.NewApp())
+	if _, err := p.Run(); err != nil {
+		panic(err)
+	}
 }
