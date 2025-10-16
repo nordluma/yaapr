@@ -6,8 +6,9 @@ type SettingsModel struct{}
 
 func NewSettings() SettingsModel { return SettingsModel{} }
 
-func (m SettingsModel) Init() tea.Cmd { return nil }
-func (m SettingsModel) View() string  { return "Settings [TODO]" }
+func (m SettingsModel) Init() tea.Cmd     { return nil }
+func (m SettingsModel) View() string      { return "Settings [TODO]" }
+func (m SettingsModel) IsTransient() bool { return false }
 
 func (m SettingsModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	switch msg := msg.(type) {

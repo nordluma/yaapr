@@ -86,8 +86,9 @@ func NewStartup() StartupModel {
 	return StartupModel{list: l}
 }
 
-func (m StartupModel) Init() tea.Cmd { return nil }
-func (m StartupModel) View() string  { return m.list.View() }
+func (m StartupModel) Init() tea.Cmd     { return nil }
+func (m StartupModel) View() string      { return m.list.View() }
+func (m StartupModel) IsTransient() bool { return false }
 
 func (m StartupModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	var cmd tea.Cmd

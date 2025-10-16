@@ -15,7 +15,8 @@ func NewAnimeDetails(a models.Anime) AnimeDetailsModel {
 	return AnimeDetailsModel{anime: a}
 }
 
-func (m AnimeDetailsModel) Init() tea.Cmd { return nil }
+func (m AnimeDetailsModel) Init() tea.Cmd     { return nil }
+func (m AnimeDetailsModel) IsTransient() bool { return false }
 
 func (m AnimeDetailsModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	switch msg := msg.(type) {

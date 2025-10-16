@@ -6,8 +6,10 @@ type SyncModel struct{}
 
 func NewSync() SyncModel { return SyncModel{} }
 
-func (m SyncModel) Init() tea.Cmd { return nil }
-func (m SyncModel) View() string  { return "Update (Sync with Anilist) [TODO]" }
+func (m SyncModel) Init() tea.Cmd     { return nil }
+func (m SyncModel) IsTransient() bool { return false }
+
+func (m SyncModel) View() string { return "Update (Sync with Anilist) [TODO]" }
 
 func (m SyncModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	switch msg := msg.(type) {
