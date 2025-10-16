@@ -10,6 +10,12 @@ type Screen interface {
 	View() string
 }
 
+type PushScreenMsg struct {
+	Screen Screen
+}
+
+type PopScreenMsg struct{}
+
 type AppModel struct {
 	stack []Screen
 }
@@ -19,6 +25,15 @@ func NewApp() AppModel { return AppModel{stack: []Screen{NewStartup()}} }
 func (m AppModel) Init() tea.Cmd { return m.current().Init() }
 
 func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case PushScreenMsg:
+		m.push(msg.Screen)
+		return m, m.current().Init()
+	case PopScreenMsg:
+		m.pop()
+		return m, nil
+	}
+
 	s, cmd := m.current().Update(msg)
 	m.stack[len(m.stack)-1] = s
 
