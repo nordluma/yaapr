@@ -1,10 +1,13 @@
 package ui
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/nordluma/yaapr/internal/anilist"
+	"github.com/nordluma/yaapr/internal/jikan"
 )
 
 type Screen interface {
@@ -18,6 +21,19 @@ type AnimeDetailsFetchedMsg struct {
 	Anime anilist.AnimeDetails
 	Err   error
 }
+
+type EpisodesFetchedMsg struct {
+	EpisodeCh <-chan jikan.Episode
+	Err       error
+	Cancel    context.CancelFunc
+}
+
+type EpisodeLoadedMsg struct {
+	Episode   jikan.Episode
+	EpisodeCh <-chan jikan.Episode
+}
+
+type EpisodeLoadCompleteMsg struct{}
 
 type SearchResponseMsg struct {
 	Result []anilist.Anime
@@ -65,6 +81,40 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, func() tea.Msg {
 			return PushScreenMsg{Screen: NewAnimeDetails(msg.Anime)}
 		}
+	case EpisodesFetchedMsg:
+		if msg.Err != nil {
+			errorScreen := NewLoading(fmt.Sprintf("Failed to load episodes: %s", msg.Err))
+			log.Printf("failed to fetch episodes: %s", msg.Err)
+			return m, func() tea.Msg { return PushScreenMsg{Screen: errorScreen} }
+		}
+
+		episodeScreen := NewEpisode()
+		episodeScreen.SetCancel(msg.Cancel)
+
+		return m, tea.Sequence(
+			func() tea.Msg { return PushScreenMsg{Screen: episodeScreen} },
+			ListenForEpisodes(msg.EpisodeCh),
+		)
+	case EpisodeLoadedMsg:
+		if len(m.stack) > 0 {
+			top := m.stack[len(m.stack)-1]
+			newScreen, cmd := top.Update(msg)
+			m.stack[len(m.stack)-1] = newScreen
+
+			return m, cmd
+		}
+
+		return m, nil
+	case EpisodeLoadCompleteMsg:
+		if len(m.stack) > 0 {
+			top := m.stack[len(m.stack)-1]
+			newScreen, cmd := top.Update(msg)
+			m.stack[len(m.stack)-1] = newScreen
+
+			return m, cmd
+		}
+
+		return m, nil
 	}
 
 	// pass all other messages to the current screen

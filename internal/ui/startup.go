@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/nordluma/yaapr/internal/anilist"
+	"github.com/nordluma/yaapr/internal/jikan"
 )
 
 const listHeight = 14
@@ -54,6 +55,12 @@ func (d itemDelegate) Render(
 			title = i.Title.English
 		} else {
 			title = i.Title.Romaji
+		}
+	case jikan.Episode:
+		if i.Title != "" {
+			title = fmt.Sprintf("%s", i.Title)
+		} else {
+			title = fmt.Sprintf("%s", i.TitleRomaji)
 		}
 	}
 

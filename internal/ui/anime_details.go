@@ -62,10 +62,12 @@ func (m AnimeDetailsModel) View() string {
 func fetchEpisodesCmd(showId int) tea.Cmd {
 	return func() tea.Msg {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
 		episodeCh, err := jikan.GetEpisodes(ctx, showId)
 
-		return EpisodesFetchedMsg{EpisodeCh: episodeCh, Err: err}
+		return EpisodesFetchedMsg{
+			EpisodeCh: episodeCh,
+			Err:       err,
+			Cancel:    cancel,
+		}
 	}
 }
