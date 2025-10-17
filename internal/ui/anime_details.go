@@ -1,11 +1,14 @@
 package ui
 
 import (
+	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/nordluma/yaapr/internal/anilist"
+	"github.com/nordluma/yaapr/internal/jikan"
 )
 
 type AnimeDetailsModel struct {
@@ -23,6 +26,12 @@ func (m AnimeDetailsModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "enter":
+			loader := NewLoading(fmt.Sprintf("Fetching episodes for %s", m.anime.Title.Romaji))
+			return m, tea.Batch(
+				func() tea.Msg { return PushScreenMsg{Screen: loader} },
+				fetchEpisodesCmd(m.anime.IDMal),
+			)
 		case "esc", "q":
 			return m, func() tea.Msg { return PopScreenMsg{} }
 		}
@@ -48,4 +57,15 @@ func (m AnimeDetailsModel) View() string {
 		strings.Join(m.anime.Genres, ", "),
 		m.anime.Episodes,
 	)
+}
+
+func fetchEpisodesCmd(showId int) tea.Cmd {
+	return func() tea.Msg {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		episodeCh, err := jikan.GetEpisodes(ctx, showId)
+
+		return EpisodesFetchedMsg{EpisodeCh: episodeCh, Err: err}
+	}
 }
