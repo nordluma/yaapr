@@ -40,9 +40,10 @@ func (m AnimeDetailsModel) View() string {
 	}
 
 	return fmt.Sprintf(
-		"Anime Details:\n\nTitle: %s\nID: %d\nStatus: %s\nGenres: %s\nEpisodes: %d\n\n[esc] / [q] - Back",
+		"Anime Details:\n\nTitle: %s\nID: %d\nMal ID: %d\nStatus: %s\nGenres: %s\nEpisodes: %d\n\n[esc] / [q] - Back",
 		title,
 		m.anime.ID,
+		m.anime.IDMal,
 		m.anime.Status,
 		strings.Join(m.anime.Genres, ", "),
 		m.anime.Episodes,
