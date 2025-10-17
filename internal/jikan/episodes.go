@@ -81,8 +81,7 @@ func GetEpisodes(ctx context.Context, showId int) (<-chan Episode, error) {
 
 	go func() {
 		defer close(outCh)
-
-		// send first page immediately
+		// send first page synchronously
 		for _, ep := range firstPage {
 			select {
 			case <-ctx.Done():
@@ -202,9 +201,9 @@ func fetchEpisodePageWithRetry(
 
 		var netErr net.Error
 		asNetErr := errors.As(err, &netErr)
-		retriableErr := netErr.Timeout() || isRateLimitError(err)
+		retriableErr := asNetErr && (netErr.Timeout() || isRateLimitError(err))
 
-		if asNetErr && retriableErr {
+		if retriableErr {
 			backoff := exponentialBackoff(attempt)
 			select {
 			case <-ctx.Done():
@@ -232,6 +231,10 @@ func fetchEpisodePage(
 	showId int,
 	page int,
 ) ([]Episode, int, error) {
+	if client == nil {
+		return nil, 0, fmt.Errorf("client is nil")
+	}
+
 	url := fmt.Sprintf(
 		"%s/anime/%d/episodes?page=%d",
 		jikanBaseUrl,
