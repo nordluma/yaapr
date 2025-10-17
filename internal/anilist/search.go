@@ -8,7 +8,6 @@ query ($search: String) {
     media(search: $search, type: ANIME) {
       id
       title { romaji english native }
-      coverImage { large }
     }
   }
 }`
@@ -20,9 +19,6 @@ type Anime struct {
 		English string `json:"english"`
 		Native  string `json:"native"`
 	} `json:"title"`
-	CoverImage struct {
-		Large string `json:"large"`
-	} `json:"coverImage"`
 }
 
 func (a Anime) FilterValue() string { return "" }
