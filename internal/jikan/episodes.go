@@ -49,7 +49,7 @@ type Episode struct {
 	Url           string `json:"url"`
 	Title         string `json:"title"`
 	TitleJapanese string `json:"title_japanese"`
-	TitleRomaji   string `json:"title_romaji"`
+	TitleRomaji   string `json:"title_romanji"`
 	Aired         string `json:"aired"`
 	Filler        bool   `json:"filler"`
 	Recap         bool   `json:"recap"`
