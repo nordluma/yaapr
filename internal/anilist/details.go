@@ -6,6 +6,7 @@ const getAnimeByIDQuery = `
 query ($id: Int!) {
     Media(id: $id, type: ANIME) {
       id
+      idMal
       title { romaji english native }
       status(version: 2)
       genres
@@ -18,6 +19,7 @@ query ($id: Int!) {
 
 type AnimeDetails struct {
 	ID    int `json:"id"`
+	IDMal int `json:"idMal"`
 	Title struct {
 		Romaji  string `json:"romaji"`
 		English string `json:"english"`
