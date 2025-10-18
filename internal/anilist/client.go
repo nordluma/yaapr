@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/nordluma/yaapr/internal/models"
 )
 
 const apiURL = "https://graphql.anilist.co"
@@ -67,14 +65,4 @@ func (c *Client) do(
 	}
 
 	return json.NewDecoder(res.Body).Decode(&v)
-}
-
-func FetchAnimeDetails(id string) models.Anime {
-	return models.Anime{
-		ID: id,
-		Title: models.AnimeTitle{
-			English: "Mocked title",
-			Romaji:  "Mocked title",
-		},
-	}
 }
