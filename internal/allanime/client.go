@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	allanimeUrl       = "https://api.allanime.day/api"
+	allanimeBaseUrl   = "https://allanime.day"
+	allanimeApiUrl    = "https://api.allanime.day/api"
 	allanimeUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0"
 	allanimeReferer   = "https://allanime.to"
 )
@@ -42,7 +43,7 @@ func (c AllanimeClient) do(
 	req, err := http.NewRequestWithContext(
 		ctx,
 		"GET",
-		fmt.Sprintf("%s?%s", allanimeUrl, urlParams.Encode()),
+		fmt.Sprintf("%s?%s", allanimeApiUrl, urlParams.Encode()),
 		nil,
 	)
 	if err != nil {
