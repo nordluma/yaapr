@@ -25,7 +25,7 @@ import "encoding/hex"
 // 63 => [, 65 => ], 78 => @, 19 => !, 1c => $, 1e => &, 10 => (, 11 => ),
 // 12 => *, 13 => +, 14 => ,, 03 => ;, 05 => =, 1d => %,
 
-const cipherKey = 0x38
+const key = 0x38
 
 func decodeHex(encoded string) (string, error) {
 	data, err := hex.DecodeString(encoded)
@@ -34,7 +34,7 @@ func decodeHex(encoded string) (string, error) {
 	}
 
 	for i := range data {
-		data[i] ^= cipherKey
+		data[i] ^= key
 	}
 
 	return string(data), nil
@@ -42,11 +42,11 @@ func decodeHex(encoded string) (string, error) {
 
 var _ = encode // this is to silence gopls complaining about a unused function
 
-func encode(s string) []byte {
+func encode(s string) string {
 	out := make([]byte, len(s))
 	for i, b := range []byte(s) {
-		out[i] = b ^ cipherKey
+		out[i] = b ^ key
 	}
 
-	return out
+	return hex.EncodeToString(out)
 }
