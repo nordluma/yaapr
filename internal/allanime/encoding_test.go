@@ -38,3 +38,37 @@ func TestDecodeHex(t *testing.T) {
 		)
 	}
 }
+
+func TestEncodeDecode(t *testing.T) {
+	samples := []string{
+		"HelloWorld",
+		"ABCDEFG",
+		"abcdefg",
+		"0123456789",
+		"!@#_-~",
+	}
+
+	for _, s := range samples {
+		encoded := encode(s)
+		decoded, err := decodeHex(encoded)
+		require.NoError(t, err)
+
+		assert.Equal(
+			t, s, decoded,
+			"Encode/decode mismatch: got %q, want %q",
+			decoded, s,
+		)
+	}
+}
+
+func TestInvalidHex(t *testing.T) {
+	_, err := decodeHex("zzzz")
+	require.Error(t, err, "expected error for invalid hex input, got nil")
+}
+
+func BenchmarkDecodeXORFunc(b *testing.B) {
+	v := "797a7b7c7d7e7f"
+	for b.Loop() {
+		_, _ = decodeHex(v)
+	}
+}
