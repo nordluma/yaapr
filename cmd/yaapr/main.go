@@ -16,7 +16,7 @@ func main() {
 	}
 	defer f.Close()
 
-	p := tea.NewProgram(ui.NewApp())
+	p := tea.NewProgram(ui.NewApp(), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		panic(err)
 	}
