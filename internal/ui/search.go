@@ -67,7 +67,7 @@ func (m *SearchModel) reset() {
 	m.input.Focus()
 }
 
-func searchAnimeCmd(client *anilist.Client, name string) tea.Cmd {
+func searchAnimeCmd(client *anilist.AnilistClient, name string) tea.Cmd {
 	return func() tea.Msg {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()

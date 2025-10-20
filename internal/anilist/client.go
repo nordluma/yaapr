@@ -10,19 +10,19 @@ import (
 
 const apiURL = "https://graphql.anilist.co"
 
-type Client struct {
+type AnilistClient struct {
 	http  *http.Client
 	token string // optional for auth
 }
 
-func NewClient(token string) *Client {
-	return &Client{
+func NewClient(token string) *AnilistClient {
+	return &AnilistClient{
 		http:  &http.Client{},
 		token: token,
 	}
 }
 
-func (c *Client) do(
+func (c *AnilistClient) do(
 	ctx context.Context,
 	query string,
 	variables map[string]any,

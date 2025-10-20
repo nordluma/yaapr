@@ -64,7 +64,7 @@ func (m SearchResultModel) Update(msg tea.Msg) (Screen, tea.Cmd) {
 	return m, cmd
 }
 
-func fetchAnimeDetailsCmd(client *anilist.Client, id int) tea.Cmd {
+func fetchAnimeDetailsCmd(client *anilist.AnilistClient, id int) tea.Cmd {
 	return func() tea.Msg {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()

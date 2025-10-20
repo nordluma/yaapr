@@ -43,7 +43,7 @@ type getAnimeByIdResponse struct {
 	} `json:"data"`
 }
 
-func (c *Client) GetAnimeById(
+func (c *AnilistClient) GetAnimeById(
 	ctx context.Context,
 	id int,
 ) (AnimeDetails, error) {

@@ -31,7 +31,7 @@ type searchResponse struct {
 	} `json:"data"`
 }
 
-func (c *Client) SearchAnime(
+func (c *AnilistClient) SearchAnime(
 	ctx context.Context,
 	name string,
 ) ([]Anime, error) {
