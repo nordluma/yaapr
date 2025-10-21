@@ -115,6 +115,12 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		return m, nil
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c":
+			return m, tea.Quit
+		}
+
 	}
 
 	// pass all other messages to the current screen
@@ -125,8 +131,6 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 	}
-
-	// TODO: handle esc
 
 	return m, nil
 }
