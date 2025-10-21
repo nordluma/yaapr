@@ -58,13 +58,13 @@ func (d itemDelegate) Render(
 		}
 	case jikan.Episode:
 		if i.Title != "" {
-			title = fmt.Sprintf("%s", i.Title)
+			title = i.Title
 		} else {
-			title = fmt.Sprintf("%s", i.TitleRomaji)
+			title = i.TitleRomaji
 		}
 	}
 
-	str := fmt.Sprintf("%s", title)
+	str := title
 
 	fn := itemStyle.Render
 	if index == m.Index() {
